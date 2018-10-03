@@ -60,6 +60,13 @@ RUN /tmp/builder/scripts/assemble-theia.sh
 # change permissions
 RUN find ${HOME} -exec sh -c "chgrp 0 {}; chmod g+rwX {}" \;
 
+# Clean
+RUN yarn cache clean
+
+# Restore registry setting
+RUN npm config set registry https://registry.npmjs.org && yarn config set registry https://registry.npmjs.org
+
+
 ###
 # Runtime Image
 #
@@ -92,10 +99,11 @@ RUN useradd -u 1000 -G users,wheel,root -d ${HOME} --shell /bin/bash theia \
     && mkdir -p ${HOME}/.config/insight-nodejs/ \
     && chmod -R 777 ${HOME}/.config/ \
     # use typescript globally (to have tsc/typescript working)
-    && npm install -g typescript@2.9.2
-RUN find ${HOME} -exec sh -c "chgrp 0 {}; chmod g+rwX {}" \;
+    && npm install -g typescript@2.9.2 \
+    # Change permissions to allow editing of files for openshift user
+    && find ${HOME} -exec sh -c "chgrp 0 {}; chmod g+rwX {}" \;
 COPY --chown=theia:root --from=builder /home/theia /home/theia
-# Change permissions to allow editing of files for openshift user
+
 USER theia
 ADD src/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
