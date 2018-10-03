@@ -94,7 +94,7 @@ RUN useradd -u 1000 -G users,wheel,root -d ${HOME} --shell /bin/bash theia \
     # use typescript globally (to have tsc/typescript working)
     && npm install -g typescript@2.9.2
 RUN find ${HOME} -exec sh -c "chgrp 0 {}; chmod g+rwX {}" \;
-COPY --chown=theia --from=builder /home/theia /home/theia
+COPY --chown=theia:root --from=builder /home/theia /home/theia
 # Change permissions to allow editing of files for openshift user
 USER theia
 ADD src/entrypoint.sh /entrypoint.sh
