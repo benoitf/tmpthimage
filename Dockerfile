@@ -57,6 +57,8 @@ RUN /tmp/builder/scripts/add-extensions.sh
 ADD src/builder/assemble-theia.sh /tmp/builder/scripts/assemble-theia.sh
 RUN /tmp/builder/scripts/assemble-theia.sh
 
+# change permissions
+RUN find ${HOME} -exec sh -c "chgrp 0 {}; chmod g+rwX {}" \;
 
 ###
 # Runtime Image
